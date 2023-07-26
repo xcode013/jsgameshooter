@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            padding:0;
+            margin:0;
+            box-sizing: border-box;
+        }
+        body{
+            background-color:rgb(0, 111, 55);
+            height: 100vh;
+            width:100%;
+        }
+        .container{
+            position: absolute;
+            top:50%;
+            left:50%;
+            transform:translate(-50%,-50%);
+        }
+        .head_base{
+            background-color:rgb(159, 159, 11);
+            width:100px;
+            height:80px;
+            border-radius:10px;
+        }
+        .head_base::after{
+            content:'';
+            background-color: yellow;
+            position: absolute;
+            top:0;
+            left:0;
+            width:90px;
+            height: 75px;
+            border-radius: 10px;
+        }
+        .head_mounth{
+            background-color: red;
+            width:40px;
+            height: 30px;
+            position: absolute;
+            bottom:0;
+            left:40%;
+            transform: translate(-40%, 10px);
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap:10px;
+        }
+        .head_mounth-a, .head_mounth-b{
+            background-color: white;
+            width: 5px;
+            height: 10px;
+            border-radius: 5px;
+        }
+        .head_eyes{
+            position: absolute;
+            top:30px;
+            left:40%;
+            transform: translateX(-40%);
+            display: flex;
+            gap:20px;
+        }
+        .eye-right, .eye-left{
+            background-color: red;
+            border-radius: 50%;
+            width: 12px;
+            height:12px;
+        }
+        .eye-right::after, .eye-left::after{
+            content: '';
+            position: absolute;
+            background-color: yellow;
+            width: 10px;
+            height: 15px;
+        }
+        .eye-right::after{
+            transform:translate(5px,-5px) rotate(-45deg);
+        }
+        .eye-left::after{
+            transform:translate(-5px,-5px) rotate(45deg);
+        }
+        .head_tanduks{
+            position: absolute;
+            top:-60px;
+            /* left:-40px; */
+            left:50%;
+            transform: translateX(-50%);
+            z-index: -1;
+            display: flex;
+        }
+        .tanduk-left, .tanduk-right{
+            background-color: yellow;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+        }
+        .tanduk-left::after, .tanduk-right::after{
+            content: '';
+            position: absolute;
+            background-color:rgb(0, 111, 55);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+        }
+        .tanduk-left::after{
+            top:-15px;
+            left:5px;
+        }
+        .tanduk-right::after{
+            top:-15px;
+            left:95px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="head_base"></div>
+        <div class="head_mounth">
+            <div class="head_mounth-a"></div>
+            <div class="head_mounth-b"></div>
+        </div>
+        <div class="head_eyes">
+            <div class="eye-right"></div>
+            <div class="eye-left"></div>
+        </div>
+        <div class="head_tanduks">
+            <div class="tanduk-left"></div>
+            <div class="tanduk-right"></div>
+        </div>
+    </div>
+</body>
+</html>

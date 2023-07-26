@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body{
+            background-color:black;
+        }
+        canvas{
+            background-color: transparent;
+            position: absolute;
+            top:50%;
+            left:50%;
+            transform:translate(-50%, -50%);
+        }
+        
+        #canvas1{
+            border:1px solid white;
+            background-color: gray;
+        }
+        
+        #canvas2{
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas2"></canvas>
+    <canvas id="canvas1"></canvas>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+        const canvas1 = document.getElementById('canvas1');
+        const ctx1 = canvas1.getContext("2d");
+        canvas1.width = 350;
+        canvas1.height = 200;
+
+        const canvas2 = document.getElementById('canvas2');
+        const ctx2 = canvas1.getContext("2d");
+        canvas1.width = 350;
+        canvas1.height = 200;
+
+        let gameSpeed = 4;
+        let lasttime = 0;
+        let timeToNextRaven = 0;
+        let ravenInterval = 1000;
+
+        // Game Background
+        const bgLayer1 = new Image(); bgLayer1.src = 'assets/imageSprite/layer-1.png';
+        const bgLayer2 = new Image(); bgLayer2.src = 'assets/imageSprite/layer-2.png';
+        const bgLayer3 = new Image(); bgLayer3.src = 'assets/imageSprite/layer-3.png';
+        const bgLayer4 = new Image(); bgLayer4.src = 'assets/imageSprite/layer-4.png';
+        const bgLayer5 = new Image(); bgLayer5.src = 'assets/imageSprite/layer-5.png';
+
+        class BackgroundLayer {
+            constructor(image, speedModifier){
+                this.image = image;
+                this.speedModifier = speedModifier;
+                this.width = canvas1.width * 2;
+                this.height = canvas1.height;
+                this.x = 0;
+                this.y = 0;
+                this.speed = gameSpeed * this.speedModifier;
+            }
+            update(){
+                this.speed = gameSpeed * this.speedModifier;
+                if(this.x <= -this.width){
+                    this.x = 0;
+                }
+                this.x = Math.floor(this.x - this.speed);
+            }
+            draw(){
+                ctx1.drawImage(this.image, this.x, this.y, this.width, this.height);
+                ctx1.drawImage(this.image, this.x + this.width, this.y, this.width, this.height);
+            }
+        }
+
+        
+        const background1 = new BackgroundLayer(bgLayer1, 0.2);
+        const background2 = new BackgroundLayer(bgLayer2, 0.4);
+        const background3 = new BackgroundLayer(bgLayer3, 0.6);
+        const background4 = new BackgroundLayer(bgLayer4, 0.8);
+        const background5 = new BackgroundLayer(bgLayer5, 1);
+        const backgrounds = [background1, background2, background3, background4, background5];
+
+        // Game Enemy
+        let ravens = [];
+        class Raven{
+            constructor(){
+                this.spriteWidth = 200;
+                this.spriteHeight = 200;
+                this.width = this.spriteWidth * 0.2 + .1;
+                this.height = this.spriteHeight * 0.2 + .1;
+                this.x = 0;
+                this.y = Math.floor(Math.random() * (canvas1.height - (this.width + 20)));
+                this.image = new Image();
+                this.image.src = 'assets/imageSprite/boom.png';
+                this.speed = 4;
+                this.frameX = 0;
+                this.timeInterval = 3;
+                // this.directX = 4;
+                this.interval = 0;
+                this.delMark = false;
+            }
+            update(){
+                // Sprite Frame Animation
+                // if(this.interval > this.timeInterval){
+                //     if(this.frameX > 3){
+                //         this.frameX = 0;
+                //     } else{
+                //         this.frameX++;
+                //     }
+                //     this.interval = 0;
+                // } else{
+                //     this.interval++;
+                // }
+
+                // delMark
+                if(this.x > canvas1.width + this.width){
+                    this.delMark = true;
+                    this.delMark = true;
+                }
+
+                this.x += gameSpeed;
+
+                
+            }
+            draw(context){
+                // context.fillStyle = this.color;
+                // context.fillRect(this.x,this.y,this.width - 2, this.height - 5);
+                context.drawImage(this.image, this.frameX * this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, this.width, this.height);
+            }
+        }
+
+        // Player
+
+        class Player{
+            constructor(){
+                this.spriteWidth = 271;
+                this.spriteHeight = 194;
+                this.width = this.spriteWidth * 0.2;
+                this.height = this.spriteHeight * 0.2;
+                this.x = canvas1.width - this.width;
+                this.y = canvas1.height/2;
+                this.image = new Image();
+                this.image.src = 'assets/imageSprite/raven.png';
+                this.frame = 0;
+                this.frameInterval = 0;
+                this.interval = 4;
+            }
+            update(){
+                if(this.frameInterval > this.interval){
+                    this.frameInterval = 0;
+                    if(this.frame > 4){
+                        this.frame = 0;
+                    } else {
+                        this.frame++;
+                    }
+                }
+                this.frameInterval++;
+
+                ravens.forEach(raven => {
+                    if(
+                        raven.x < this.x + this.width && raven.x + raven.width > this.x &&
+                        raven.y < this.y + this.height && raven.y + raven.height > this.y
+                    ){
+                        return gameover = true;
+                    }
+                })
+            }
+            draw(context){
+                // context.fillStyle = this.color;
+                // context.fillRect(this.x,this.y,this.width - 2, this.height - 5);
+                context.drawImage(this.image, this.frame * this.spriteWidth, 0, this.spriteWidth, this.spriteHeight, this.x, this.y, this.width, this.height);
+            }
+        }
+
+        const player = new Player();
+
+        let score = 0;
+        ctx1.font = '20px impact';
+        // DrawScore
+        function drawScore(){
+            ctx1.fillStyle = 'black';
+            ctx1.alignText = 'center';
+            ctx1.fillText(`score : ${score}`, 5, 20);
+        }
+
+        // Gameover
+        let gameover = false;
+        function gameOver(){
+            ctx1.font = '35px impact';
+            ctx1.fillStyle = 'black';
+            ctx1.alignText = 'center';
+            ctx1.fillText('Gameover', canvas1.width/3 - 10, canvas1.height/2);
+            ctx1.font = '20px impact';
+            ctx1.fillStyle = 'black';
+            ctx1.alignText = 'center';
+            ctx1.fillText('score : ' + score, canvas1.width/3 + 20, canvas1.height/2 + 20);
+            ctx1.font = '10px impact';
+            ctx1.fillStyle = 'black';
+            ctx1.alignText = 'center';
+            ctx1.fillText('press Enter to start again', canvas1.width/3 + 10, canvas1.height/2 + 35);
+        }
+
+        // Controler
+        window.addEventListener('keydown', function(e){
+            if(e.key === 'ArrowUp' && player.y > 0){
+                player.y -= player.height;
+            } else if(e.key === 'ArrowDown' && player.y < canvas1.height - player.height){
+                player.y += player.height;
+            } else if(e.key === 'ArrowLeft' && player.x > 0){
+                player.x -= player.width;
+            } else if(e.key === 'ArrowRight' && player.x < canvas1.width - player.width){
+                player.x += player.width;
+            } else if(e.key === 'k'){
+                console.log(gameover);
+                gameover = false;
+            }
+        })
+
+        function animate(timestamp){
+            ctx1.clearRect(0,0,canvas1.width, canvas1.height);
+            ctx2.clearRect(0,0,canvas2.width, canvas2.height);
+            
+            // Background Game
+            // backgrounds.forEach(layer => {
+            //     layer.update();
+            //     layer.draw();
+            // })
+
+            
+            // Enemy Game
+            let deltatime = timestamp - lasttime;
+            lasttime = timestamp;
+            timeToNextRaven += deltatime;
+
+            if(timeToNextRaven > ravenInterval){
+                ravens.push(new Raven());
+                timeToNextRaven = 0;
+                score++;
+                ravens.sort(function(a,b){
+                    return a.width - b.width;
+                })
+            }
+
+            
+            [...ravens].forEach(object => object.update());
+            [...ravens].forEach(object => object.draw(ctx2));
+
+            ravens = ravens.filter(object => !object.delMark);
+
+            // Player
+            player.update();
+            player.draw(ctx1);
+
+            if(!gameover){
+                            
+
+                requestAnimationFrame(animate);
+
+                // score
+                drawScore();
+            }
+
+            if(gameover){
+                gameOver();
+            }
+        }
+        animate(0);
+    })
+</script>
+</body>
+</html>
